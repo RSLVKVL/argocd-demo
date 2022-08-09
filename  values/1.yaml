@@ -1,0 +1,55 @@
+image:
+  registry: 304333971729.dkr.ecr.eu-west-2.amazonaws.com
+configmap:
+  ASPNETCORE_ENVIRONMENT: grimaldi
+  AllowedHeaders__0: clientid
+  AllowedHeaders__1: clientsecret
+  AllowedOrigins__0: https://abxweb-frontend.grimaldi.abxinternal.com
+  AllowedOrigins__1: https://localhost
+  AllowedOrigins__2: https://localhost:3000
+  BootstrapServers: kafka-cp-kafka.kafka.svc.cluster.local:9092
+  DEVICE_SERVICE__URL: http://device-server/api/device/v1/device
+  GENEREATE_OVERLAY: "true"
+  Kafka__BootstrapServers: kafka-cp-kafka.kafka.svc.cluster.local:9092
+  Kafka__SchemaRegistry: kafka-cp-schema-registry.kafka.svc.cluster.local:8081
+  Kafka_Timeout: "10"
+  MODCHUBB_ORG_ID: d0848611-a1e1-41ce-bfb3-70191d058f16
+  MODCHUBB_ORG_NAME: mod-chubb
+  OVERLAY__URL: http://overlay-server/api/overlay/v2/overlay/locationdetails
+  REDIS__CONNECTIONSTRING: redis.redis.svc.cluster.local:6379
+  SchemaRegistry: kafka-cp-schema-registry.kafka.svc.cluster.local:8081
+  Serilog__WriteTo__1__Args__serverUrl: http://seq.devtools.svc.cluster.local:5341
+  Auth__Audience: backend-service-client
+  Auth__Authority: https://keycloak.grimaldi.abxinternal.com/auth/realms/grimaldi
+  Auth__Scope: "openid email profile roles web-origins"
+deployment:
+  annotations:
+    reloader.stakater.com/auto: "true"
+podAnnotations:
+  linkerd.io/inject: enabled
+ingress:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  enabled: true
+  hosts:
+  - host: asset-manager.grimaldi.abxinternal.com
+    paths:
+    - path: /
+      pathType: Prefix
+  name: asset-manager
+  tls:
+  - hosts:
+    - asset-manager.grimaldi.abxinternal.com
+    secretName: tf-development-grimaldi-tls
+persistence:
+  storageClassName: gp2
+replicaCount: 1
+resources:
+  limits:
+    cpu: 500m
+    memory: 500Mi
+secrets:
+  ConnectionStrings__AssetDatabase: User ID=postgres;Host=tf-development-grimaldi-postgres.cxtjk4tx2qot.eu-west-2.rds.amazonaws.com;Port=5432;Database=asset;Password=NLveOT5ksQ8Tvqbi;
+  Auth__Client_Secret: "b732b905-e97e-467a-81e0-8a13fe1e6231"
